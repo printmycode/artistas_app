@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+
+    <div class="dropdown my-3 dropdown-menu-scroll">
+        <form action="{% url 'listado' %}" method="get">
+            <button class="btn btn-secondary dropdown-toggle" type="submit" data-bs-toggle="dropdown" aria-expanded="false">
+                {% if artista_seleccionado %}
+                    {{ artista_seleccionado }}
+                {% else %}
+                    Selecciona un artista
+                {% endif %}
+            </button>
+            <ul class="dropdown-menu" style="max-height: 400px; overflow-y: auto;">
+                {% for artista in artistas %}
+                    <li><button type="submit" class="dropdown-item" name="artist" value="{{ artista }}">{{ artista }}</button></li>
+                {% endfor %}
+                {% if artista_seleccionado %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <button type="submit" class="dropdown-item text-primary fw-semibold" name="artist" value="">Mostrar todos los artistas</button>
+                    </li>
+                {% endif %}
+            </ul>
+        </form>
+    </div>
+    <!-- <div class="row">
+        <div class="col-4">
+            <select name="artista" id="select"></select>
+        </div>
+    </div> -->
+    
+    <div class="row">
+        <div class="">
+            <table class="table table-striped table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">ARTISTA</th>
+                        <th scope="col">ALBUM</th>
+                        <th scope="col">CANCION</th>
+                        <th scope="col">COMPOSITOR</th>
+                        <th scope="col" class="col-1">OPCION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for track in page %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td>{{ track.albumid.artistid.name }}</td>
+                            <td>{{ track.albumid.title }}</td>
+                            <td>{{ track.name }}</td>
+                            <td>{{ track.composer }}</td>
+                            <td>
+                                <a href="editar/{{ track.trackid }}" class="btn btn-info">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal{{ forloop.counter}}">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                                <!-- Modal -->
+                                <div class="modal fade" id="exampleModal{{forloop.counter}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Confirmar eliminación</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                ¿Estás seguro de eliminar el siguiente registro?<br> 
+                                                {{track.albumid.artistid.name}} - {{track.name}}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#eliminadoModal">Eliminar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal fade" id="eliminadoModal" tabindex="-1" aria-labelledby="eliminadoModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="eliminadoModalLabel">Registro eliminado</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                El registro ha sido eliminado correctamente.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a href="/listado/" class="btn btn-primary">OK</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Mostrar la paginación -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% if page.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1{% if artista_seleccionado %}&artist={{ artista_seleccionado }}{% endif %}">First</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}{% if artista_seleccionado %}&artist={{ artista_seleccionado }}{% endif %}">Previous</a></li>
+            {% endif %}
+
+            {% if page.paginator.num_pages > 1 %}
+                {% for num in page.paginator.page_range %}
+                    {% if num == page.number %}
+                        <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page.number|add:'-3' and num < page.number|add:'3' %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}{% if artista_seleccionado %}&artist={{ artista_seleccionado }}{% endif %}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            {% if page.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}{% if artista_seleccionado %}&artist={{ artista_seleccionado }}{% endif %}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page.paginator.num_pages }}{% if artista_seleccionado %}&artist={{ artista_seleccionado }}{% endif %}">Last</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    <p>
+        Mostrando {{ page.start_index }} - {{ page.end_index }} de {{ page.paginator.count }} entradas.
+    </p>
+
+</div>
+
+{% endblock %}

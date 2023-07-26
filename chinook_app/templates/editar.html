@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center my-5">EDITAR TRACK</h1>
+    <div class="row">
+        <div class="card py-4 px-4 col-4 mx-auto">
+            <form action="/editar_track" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label"># ID</label>
+                    <input name="trackid" type="number" class="form-control" value="{{ track.trackid }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Artista</label>
+                    <input name="artista" type="text" class="form-control" value="{{ track.albumid.artistid.name }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Álbum</label>
+                    <input name="album" type="text" class="form-control" value="{{ track.albumid.title }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Nombre de la canción</label>
+                    <input name="cancion" type="text" class="form-control" value="{{ track.name }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Compositor</label>
+                    <input name="compositor" type="text" class="form-control" value="{{ track.composer }}" required>
+                </div>
+                <button type="submit" class="btn btn-primary" >Editar</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
