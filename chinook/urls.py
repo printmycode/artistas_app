@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from chinook_app import views
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,3 +28,5 @@ urlpatterns = [
     path('listado/eliminar/<id>', views.eliminar, name='eliminar'),
     path('editar_track', views.editar_track)
 ]
+
+urlpatterns += staticfiles_urlpatterns()
